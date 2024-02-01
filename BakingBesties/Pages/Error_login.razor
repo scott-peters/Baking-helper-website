@@ -1,0 +1,165 @@
+﻿@page "/error_login"
+
+<style>
+    .nav-item {
+        padding-right: 20px
+    }
+
+    .form-inline {
+        position: absolute;
+        padding-right: 10px;
+        right: 0px;
+    }
+
+    .button {
+        border: none;
+        color: white;
+        padding: 16px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+    }
+
+    .button1 {
+        background-color: white;
+        color: black;
+        border: 2px solid #4CAF50;
+    }
+
+        .button1:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+    .button2 {
+        background-color: white;
+        color: black;
+        border: 2px solid #008CBA;
+    }
+
+        .button2:hover {
+            background-color: #008CBA;
+            color: white;
+        }
+
+    .parent {
+        display: table;
+        width: 100%;
+    }
+    /* got how to center from here
+        https://stackoverflow.com/questions/22658141/css-center-form-in-page-horizontally-and-vertically
+    */
+    #form_login {
+        left: 57%;
+        top: 40%;
+        position: absolute;
+        transform: translate(-50%, -50%);
+    }
+
+    /*
+        Hover text from here. doesnt work exactly how I want but oh well
+        https://stackoverflow.com/questions/14263594/how-to-show-text-on-image-when-hovering
+    */
+    .overlay {
+        position: relative;
+        height: 70px;
+        width: 70px;
+    }
+
+    .hover_text {
+        position: absolute;
+        top: 20%;
+        bottom: 0;
+        left: 20%;
+        right: 0;
+        background: #808080;
+        color: #fff;
+        visibility: hidden;
+        opacity: 0.4;
+        /* transition effect. not necessary */
+        transition: opacity .2s, visibility .2s;
+    }
+
+    .overlay:hover .hover_text {
+        visibility: visible;
+        opacity: 0.4;
+    }
+
+    .error {
+        color: #D8000C;
+        /*background-color: #FFBABA;*/
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+    <a class="navbar-brand" href="#" title="Go back Home">
+        <div class="overlay">
+            <img src='bblogo_smol.jpg'>
+            <p class="hover_text">Home</p>
+        </div>
+    </a>
+
+    <div class="collapse navbar-collapse" id="navbarText">
+
+        <ul class="navbar-nav mr-auto">
+
+            <li class="nav-item">
+                <a class="nav-link" href="counter">Bookmarks</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Login/Signup</a>
+            </li>
+
+
+        </ul>
+
+        <form class="form-inline">
+            <input class="form-control" placeholder="Search" aria-label="Search">
+        </form>
+
+    </div>
+
+</nav>
+
+<div align="center">
+
+    <img src="bblogo.png" alt="Baking Besties" width="200" height="150" />
+
+</div>
+
+<div align="center">
+    <h2>Login</h2>
+</div>
+
+<div align="center">
+    <div id=" parent">
+        <form class="form-horizontal">
+            <form id="form_login">
+                <label for="uname">Email:</label>
+                <input type="text" id="email" name="email" placeholder="Email@example.com"><br><br>
+                <label for="password">Password:</label>
+                <input type="text" id="password" name="password" placeholder="Password"><br><br>
+                <div class="error">Incorrect Email or Password</div><br>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox"> Remember me
+                    </label>
+                </div>
+                <button class="button button1">Submit</button>
+                <button class="button button2">New? Signup</button>
+            </form>
+        </form>
+    </div>
+</div>
+
+@code {
+    
+
+}
+
+

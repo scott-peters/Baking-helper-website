@@ -1,0 +1,120 @@
+﻿@inject NavigationManager Navmanager
+
+<style>
+    .nav-item{
+        padding-right:20px
+    }
+    .form-inline{
+        position:absolute;
+        padding-right:10px;
+        right:0px;
+    }
+
+    .overlay {
+        position: relative;
+        height: 70px;
+        width: 70px;
+    }
+
+    .hover_text {
+        position: absolute;
+        top: 20%;
+        bottom: 0;
+        left: 20%;
+        right: 0;
+        background: #808080;
+        color: #fff;
+        visibility: hidden;
+        opacity: 0.4;
+        /* transition effect. not necessary */
+        transition: opacity .2s, visibility .2s;
+    }
+
+    .overlay:hover .hover_text {
+        visibility: visible;
+        opacity: 0.4;
+    }
+
+    .dropdown-item{
+        background-color:wheat;
+        position:relative;
+        z-index:100;
+    }
+</style>
+
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="height:90px">
+
+    <a class="navbar-brand" href="#" title="Go back Home" >
+        <div class="overlay">
+            <img src='bblogo_smol.jpg'>
+            <p class="hover_text">Home</p>
+        </div>
+    </a>
+  <div class="collapse navbar-collapse" id="navbarText" >
+
+    <ul class="navbar-nav mr-auto">
+
+            <li class="nav-item dropdown" style="position:absolute">
+                <a class="nav-link dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" @onclick="showtis" @onblur="hidetis">
+                    Categories
+                </a>
+                @if (show)
+                {
+                    <div>
+                        <a class="dropdown-item" href="#">Breakfast</a>
+                        <a class="dropdown-item" href="#">Lunch</a>
+                        <a class="dropdown-item" href="#">Dinner</a>
+                        <a class="dropdown-item" href="#">All Categories</a>
+                    </div>
+                }
+            </li>
+
+
+            <li class="nav-item" style="position:relative; margin-left:150px">
+        <a class="nav-link" href="bookmarks">Bookmarks</a>
+      </li>
+            <li class="nav-item" style="position:relative">
+        <a class="nav-link" href="login">Login/Signup</a>
+      </li>
+            
+            
+    </ul>
+
+        <form class="form-inline" onsubmit="@HandleSubmit">
+            <input class="form-control"  placeholder="Search" aria-label="Search" @bind-value="searchVal">
+  
+        </form>
+
+  </div>
+
+
+</nav>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private bool show = false;
+
+    private string searchVal;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+    private void showtis()
+    {
+        show = !show;
+    }
+    private void hidetis()
+    {
+        show = false;
+    }
+    protected void HandleSubmit()
+    {
+        if(searchVal.Length > 0)
+        Navmanager.NavigateTo($"/search" +"/" +searchVal);
+    }
+}

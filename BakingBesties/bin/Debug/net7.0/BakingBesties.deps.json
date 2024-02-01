@@ -1,0 +1,34 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v7.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v7.0": {
+      "BakingBesties/1.0.0": {
+        "dependencies": {
+          "Microsoft.TypeScript.MSBuild": "4.9.5"
+        },
+        "runtime": {
+          "BakingBesties.dll": {}
+        }
+      },
+      "Microsoft.TypeScript.MSBuild/4.9.5": {}
+    }
+  },
+  "libraries": {
+    "BakingBesties/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.TypeScript.MSBuild/4.9.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-8Nq9JaDMKsO2a883+IWhOMP0iYAL8QOw+TJQvHuhOTxPiDOw2qy8rWL04UQUbWEPfDztijLD0SW8C0NMw/Q2sw==",
+      "path": "microsoft.typescript.msbuild/4.9.5",
+      "hashPath": "microsoft.typescript.msbuild.4.9.5.nupkg.sha512"
+    }
+  }
+}

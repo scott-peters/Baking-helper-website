@@ -1,0 +1,118 @@
+﻿@using Microsoft.AspNetCore.Components
+
+<style>
+    .tooltip {
+        visibility: hidden;
+        opacity: 0;
+        position: absolute;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 5px 10px;
+        background-color: black;
+        color: white;
+        font-size: 14px;
+        border-radius: 5px;
+        transition: visibility 0s, opacity 0.2s linear;
+    }
+
+    .card-button:hover .tooltip {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .card-buttons {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        margin: 10px;
+        display: flex;
+    }
+
+    .card-button {
+        margin-left: 10px;
+        padding: 5px;
+        background-color: #fff;
+        border: none;
+        cursor: pointer;
+    }
+</style>
+
+<div class="card-buttons">
+    <button class="card-button" @onclick="OnThumbsUpClick" disabled="@thumbsDownClicked">
+        <i class="@thumbsUpIcon"></i>
+        <span class="tooltip">@thumbsUpTooltipText</span>
+    </button>
+
+    <button class="card-button" @onclick="OnThumbsDownClick" disabled="@thumbsUpClicked">
+        <i class="@thumbsDownIcon"></i>
+        <span class="tooltip">@thumbsDownTooltipText</span>
+    </button>
+
+    <button class="card-button" @onclick="OnBookmarkClick">
+        <i class="@bookmarkIcon"></i>
+        <span class="tooltip">@bookmarkTooltipText</span>
+    </button>
+</div>
+
+@code {
+    private bool thumbsUpClicked = false;
+    private bool thumbsDownClicked = false;
+
+    [Parameter]
+    public EventCallback OnThumbsUpClicked { get; set; }
+
+    [Parameter]
+    public EventCallback OnThumbsDownClicked { get; set; }
+
+    [Parameter]
+    public EventCallback OnBookmarkClicked { get; set; }
+
+    [Parameter]
+    public bool IsBookmarked { get; set; }
+
+    private string thumbsUpIcon = "fa-regular fa-thumbs-up";
+    private string thumbsUpTooltipText = "Recommend More Like This";
+
+    private string thumbsDownIcon = "fa-regular fa-thumbs-down";
+    private string thumbsDownTooltipText = "Recommend Less Like This";
+
+    private string bookmarkIcon => IsBookmarked ? "fa-solid fa-bookmark" : "fa-regular fa-bookmark";
+    private string bookmarkTooltipText => IsBookmarked ? "Unbookmark" : "Bookmark";
+
+    private void OnThumbsUpClick()
+    {
+        thumbsUpClicked = !thumbsUpClicked;
+        thumbsUpIcon = thumbsUpClicked ? "fa-solid fa-thumbs-up" : "fa-regular fa-thumbs-up";
+        thumbsUpTooltipText = thumbsUpClicked ? "You liked this" : "Recommend More Like This";
+        OnThumbsUpClicked.InvokeAsync(thumbsUpClicked);
+        if (thumbsDownClicked)
+        {
+            thumbsDownClicked = false;
+            thumbsDownIcon = "fa-regular fa-thumbs-down";
+            thumbsDownTooltipText = "Recommend Less Like This";
+            OnThumbsDownClicked.InvokeAsync(thumbsDownClicked);
+        }
+    }
+
+    private void OnThumbsDownClick()
+    {
+        thumbsDownClicked = !thumbsDownClicked;
+        thumbsDownIcon = thumbsDownClicked ? "fa-solid fa-thumbs-down" : "fa-regular fa-thumbs-down";
+        thumbsDownTooltipText = thumbsDownClicked ? "You disliked this" : "Recommend Less Like This";
+        OnThumbsDownClicked.InvokeAsync(thumbsDownClicked);
+        if (thumbsUpClicked)
+        {
+            thumbsUpClicked = false;
+            thumbsUpIcon = "fa-regular fa-thumbs-up";
+            thumbsUpTooltipText = "Recommend More Like This";
+            OnThumbsUpClicked.InvokeAsync(thumbsUpClicked);
+        }
+    }
+
+    private void OnBookmarkClick()
+    {
+        IsBookmarked = !IsBookmarked;
+        OnBookmarkClicked.InvokeAsync(IsBookmarked);
+    }
+}

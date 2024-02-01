@@ -1,0 +1,379 @@
+﻿@page "/strangerprofile"
+
+<style>
+    .nav-item {
+        padding-right: 20px
+    }
+
+    .form-inline {
+        position: absolute;
+        padding-right: 10px;
+        right: 0px;
+    }
+
+    .button {
+        border: none;
+        color: white;
+        padding: 16px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+    }
+
+    .button1 {
+        background-color: white;
+        color: black;
+        border: 2px solid #4CAF50;
+    }
+
+        .button1:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+    .button2 {
+        background-color: white;
+        color: black;
+        border: 2px solid #008CBA;
+    }
+
+        .button2:hover {
+            background-color: #008CBA;
+            color: white;
+        }
+
+    .parent {
+        display: table;
+        width: 100%;
+    }
+    /* got how to center from here
+        https://stackoverflow.com/questions/22658141/css-center-form-in-page-horizontally-and-vertically
+    */
+    #form_login {
+        left: 57%;
+        top: 40%;
+        position: absolute;
+        transform: translate(-50%, -50%);
+    }
+
+    /*
+        Hover text from here. doesnt work exactly how I want but oh well
+        https://stackoverflow.com/questions/14263594/how-to-show-text-on-image-when-hovering
+    */
+    .overlay {
+        position: relative;
+        height: 70px;
+        width: 70px;
+    }
+
+    .hover_text {
+        position: absolute;
+        top: 20%;
+        bottom: 0;
+        left: 20%;
+        right: 0;
+        background: #808080;
+        color: #fff;
+        visibility: hidden;
+        opacity: 0.4;
+        /* transition effect. not necessary */
+        transition: opacity .2s, visibility .2s;
+    }
+
+    .overlay:hover .hover_text {
+        visibility: visible;
+        opacity: 0.4;
+    }
+
+    .container {
+        align-items: center;
+        justify-content: center;
+    }
+
+
+    .imgtext {
+        text-align: justify;
+        width: 200px;
+    }
+
+    .flt {
+        float: left;
+        margin: 0 15px 0 0;
+    }
+
+    .text {
+        font-size: 20px;
+        padding-left: 20px;
+        padding-top: 20%;
+        float: left;
+    }
+
+    box {
+        width: 320px;
+        padding: 10px;
+        border: 3px solid gray;
+        margin: 0;
+    }
+
+    .sort-link {
+        cursor: pointer;
+        color: blue;
+        text-decoration: underline;
+    }
+
+    .review-section {
+        background-color: #e3f1fa;
+        border: 1px solid #dcebff;
+        border-radius: 5px;
+        padding: 20px;
+    }
+
+    .review {
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .review-form {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+        .review-form input[type=text], .review-form textarea {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+        }
+
+    .review-form-submit {
+        text-align: right;
+        background-color: rgb(255, 180, 180);
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    /**
+    * Rating system gotten from https://codepen.io/neilpomerleau/pen/wzxzQM
+    */
+    .rating {
+        display: inline-block;
+        position: relative;
+        height: 25px;
+        line-height: 25px;
+        font-size: 25px;
+    }
+
+        .rating label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            cursor: pointer;
+        }
+
+            .rating label:last-child {
+                position: static;
+            }
+
+            .rating label:nth-child(1) {
+                z-index: 5;
+            }
+
+            .rating label:nth-child(2) {
+                z-index: 4;
+            }
+
+            .rating label:nth-child(3) {
+                z-index: 3;
+            }
+
+            .rating label:nth-child(4) {
+                z-index: 2;
+            }
+
+            .rating label:nth-child(5) {
+                z-index: 1;
+            }
+
+            .rating label input {
+                position: absolute;
+                top: 0;
+                left: 0;
+                opacity: 0;
+            }
+
+            .rating label .icon {
+                float: left;
+                color: transparent;
+            }
+
+            .rating label:last-child .icon {
+                color: #b8b8b8;
+            }
+
+        .rating:not(:hover) label input:checked ~ .icon,
+        .rating:hover label:hover input ~ .icon {
+            color: rgb(255, 190, 190);
+        }
+
+        .rating label input:focus:not(:checked) ~ .icon:last-child {
+            color: #b8b8b8;
+            text-shadow: 0 0 5px rgb(255, 190, 190);
+        }
+
+    button.like {
+        color: rgb(0, 0, 0);
+        background: none;
+        border: none;
+        font-size: 20px;
+    }
+</style>
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<p>
+    <img style="float: left; margin: 0px 15px 15px 0px;" src="swedishchef.png" width="200" />
+    <div align="center">
+        <h3>CoolBakerPerson</h3><br><br>
+        <strong>Account Created:</strong> 04/01/2023<br>
+        <strong> Number of reviews:</strong> 4<br>
+        <strong>Average Review Score:</strong> 3.0
+    </div>
+</p>
+
+
+<div style="display: flex; align-items: center; justify-content: space-between;">
+    <p style="padding-left:1%;padding-top:1%">@reviews.LongCount() Reviews</p>
+    <div style="padding-right:1%;">
+        <label for="sort-ratings">Sort by:</label>
+        <select name="sort-ratings" id="sort-ratings" @onchange="SortReviews">
+            <option value="latest">Latest</option>
+            <option value="rating-high">Rating-High</option>
+            <option value="rating-low">Rating-Low</option>
+            <option value="helpful">Most Helpful</option>
+        </select>
+    </div>
+</div>
+
+
+@foreach (var review in reviews)
+{
+    <div class="review">
+        <p style="text-align:left">
+            @if (@review.Rating == 5)
+            {
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+            }
+            else if (@review.Rating == 4)
+            {
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+            }
+            else if (@review.Rating == 3)
+            {
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+            }
+            else if (@review.Rating == 2)
+            {
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+            }
+            else if (@review.Rating == 1)
+            {
+                <span class="icon">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+            }
+        </p>
+        <p>@review.Date.ToShortDateString()</p>
+
+        <p>@review.Comments</p>
+
+        <p>@review.Likes</p>
+    </div>
+}
+
+@code {
+
+    public class Review
+    {
+        public int Rating { get; set; }
+        public string Comments { get; set; }
+        public DateTime Date { get; set; }
+        public int Likes { get; set; }
+        public bool Pressed { get; set; }
+    }
+    private List<Review> reviews = new List<Review>
+{
+      new Review { Rating = 5, Comments = "Easy, quick to make dish with easy to find ingredients. Great dish for adults and kids!", Date = DateTime.Now, Likes = 9 },
+      new Review { Rating = 4, Comments = "Delicious!", Date = DateTime.Parse("2022-03-27 15:29:21"), Likes = 2},
+      new Review { Rating = 1, Comments = "Could be better.", Date = DateTime.Parse("2020-08-04 15:29:21")},
+      new Review { Rating = 2, Comments = "Too many carbs for my liking. If you're watching your carb intake, this isn't the dish for you.", Date = DateTime.Parse("2022-01-20 13:54:17"), Likes = 0 },
+  };
+
+    private List<Review> sorted_reviews;
+    string selectedSortOption = "latest";
+    private Review newReview = new Review();
+
+
+    private void SortReviews(ChangeEventArgs e)
+    {
+        sorted_reviews = reviews;
+        selectedSortOption = e.Value.ToString();
+
+        switch (selectedSortOption)
+        {
+            case "latest":
+                sorted_reviews = reviews.OrderByDescending(r => r.Date).ToList();
+                break;
+            case "rating-high":
+                sorted_reviews = reviews.OrderByDescending(r => r.Rating).ToList();
+                break;
+            case "rating-low":
+                sorted_reviews = reviews.OrderBy(r => r.Rating).ToList();
+                break;
+            case "helpful":
+                sorted_reviews = reviews.OrderByDescending(l => l.Likes).ToList();
+                break;
+        }
+
+        reviews = sorted_reviews;
+
+    }
+
+}

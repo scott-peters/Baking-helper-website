@@ -1,0 +1,326 @@
+@page "/reviews"
+
+<style>
+
+    .review-section {
+        background-color: #e3f1fa;
+        border: 1px solid #dcebff;
+        border-radius: 5px;
+        padding: 20px;
+    }
+
+    .review {
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .review-form {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    .review-form input[type=text], .review-form textarea {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        resize: none;
+    }
+
+    .review-form-submit{
+      text-align:right;
+      background-color: rgb(255, 180, 180);
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    /**
+    * Rating system gotten from https://codepen.io/neilpomerleau/pen/wzxzQM
+    */
+    .rating {
+      display: inline-block;
+      position: relative;
+      height: 25px;
+      line-height: 25px;
+      font-size: 25px;
+    }
+
+    .rating label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .rating label:last-child {
+      position: static;
+    }
+
+    .rating label:nth-child(1) {
+      z-index: 5;
+    }
+
+    .rating label:nth-child(2) {
+      z-index: 4;
+    }
+
+    .rating label:nth-child(3) {
+      z-index: 3;
+    }
+
+    .rating label:nth-child(4) {
+      z-index: 2;
+    }
+
+    .rating label:nth-child(5) {
+      z-index: 1;
+    }
+
+    .rating label input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+    }
+
+    .rating label .icon {
+      float: left;
+      color: transparent;
+    }
+
+    .rating label:last-child .icon {
+      color: #b8b8b8;
+    }
+
+    .rating:not(:hover) label input:checked ~ .icon,
+    .rating:hover label:hover input ~ .icon {
+      color: rgb(255, 190, 190);
+    }
+
+    .rating label input:focus:not(:checked) ~ .icon:last-child {
+      color: #b8b8b8;
+      text-shadow: 0 0 5px rgb(255, 190, 190);
+    }
+
+    button.like{
+      color: rgb(0, 0, 0);
+      background: none;
+      border: none;
+      font-size: 20px;
+    }
+
+</style>
+
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<div class = "review-section">
+  <h2>Reviews</h2>
+
+  <form @onsubmit="AddReview" class = "review-form">
+    <h2 style = "font-weight:bold;font-size: 18px;" >Write a Review</h2>
+    <div>
+          <div class="rating">
+            <label>
+              <input type="radio" name="stars" value="1" @onchange="() => newReview.Rating = 1"/>
+              <span class="icon">★</span>
+            </label>
+            <label>
+              <input type="radio" name="stars" value="2" @onchange="() => newReview.Rating = 2"/>
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+            </label>
+            <label>
+              <input type="radio" name="stars" value="3" @onchange="() => newReview.Rating = 3"/>
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+              <span class="icon">★</span>   
+            </label>
+            <label>
+              <input type="radio" name="stars" value="4" @onchange="() => newReview.Rating = 4"/>
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+            </label>
+            <label>
+              <input type="radio" name="stars" value="5" @onchange="() => newReview.Rating = 5"/>
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+            </label>
+          </div>
+    </div>
+
+    <div>
+        <textarea id="comments" @bind="newReview.Comments" placeholder="Write your review here..." required></textarea>
+    </div>
+    <button type="submit" class = "review-form-submit">Post Review</button>
+
+</form>
+
+<div style="display: flex; align-items: center; justify-content: space-between;">
+  <p style="padding-left:1%;padding-top:1%">@reviews.LongCount() Reviews</p>
+  <div style="padding-right:1%;"> 
+    <label for="sort-ratings">Sort by:</label>
+    <select name="sort-ratings" id="sort-ratings" @onchange="SortReviews">
+        <option value="latest">Latest</option>
+        <option value="rating-high">Rating-High</option>
+        <option value="rating-low">Rating-Low</option>
+        <option value="helpful">Most Helpful</option>
+    </select>
+  </div>
+</div>
+
+
+  @foreach (var review in reviews)
+  {
+      <div class="review">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <p>
+            @if (@review.Rating == 5){
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+            }
+            else if (@review.Rating == 4){
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+              <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+            }
+            else if (@review.Rating == 3){
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+              <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+              <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+            }
+            else if (@review.Rating == 2){
+              <span class="icon">★</span>
+              <span class="icon">★</span>
+              <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+              <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+              <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+            }
+            else if (@review.Rating == 1){
+              <span class="icon">★</span>
+              <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+              <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+              <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+              <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+            }
+          </p>
+          <p>@review.Date.ToShortDateString()</p>
+        </div>
+          <p><strong><a href="/StrangerProfile" style = "color:black;text-decoration-color: rgb(255, 190, 190);">@review.ReviewerName</a></strong></p>
+          <p>@review.Comments</p>
+
+          <p style="text-align:right;">
+          <button class="like" @onclick="() => IncrementLikes(review)"> 
+            <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+          </button>
+          @review.Likes
+          </p>
+
+      </div>
+  }
+
+</div>
+
+@code {
+  public class Review
+  {
+    public string ReviewerName { get; set; }
+    public int Rating { get; set; }
+    public string Comments { get; set; }
+    public DateTime Date { get; set; }
+    public int Likes { get; set;}
+    public bool Pressed {get; set;}
+  }
+  private List<Review> reviews = new List<Review>
+  {
+      new Review { ReviewerName = "CoolBakerPerson", Rating = 5, Comments = "Easy, quick to make dish with easy to find ingredients. Great dish for adults and kids!", Date = DateTime.Now, Likes = 9 },
+      new Review { ReviewerName = "JesusIsKing1965", Rating = 4, Comments = "Delicious!", Date = DateTime.Parse("2022-03-27 15:29:21"), Likes = 2},
+      new Review { ReviewerName = "EmoLvrB0y420", Rating = 3, Comments = "Could be better.", Date = DateTime.Parse("2020-08-04 15:29:21")},
+      new Review { ReviewerName = "FitnessFanatic84", Rating = 5, Comments = "This dish is the perfect balance of healthy and delicious. Try substituting table salt with Himalayan pink salt. Highly recommend!", Date = DateTime.Now, Likes = 12 },
+      new Review { ReviewerName = "GourmetGoddess", Rating = 4, Comments = "Great flavors, but a bit time-consuming to make. Worth the effort though!", Date = DateTime.Parse("2022-02-15 10:12:05"), Likes = 6 },
+      new Review { ReviewerName = "SpiceMaster123", Rating = 5, Comments = "Love the bold spices in this dish. A new favorite!", Date = DateTime.Parse("2022-03-01 17:45:29"), Likes = 8 },
+      new Review { ReviewerName = "Junkooks_wife444", Rating = 3, Comments = "Decent dish, but not a hit with the kids. Probably won't make it again.", Date = DateTime.Parse("2021-11-08 08:22:41"), Likes = 1 },
+      new Review { ReviewerName = "VeganVibes", Rating = 4, Comments = "Easy to modify to make vegan-friendly. Tasty and filling!", Date = DateTime.Now, Likes = 5 },
+      new Review { ReviewerName = "KawaiiKitten666", Rating = 2, Comments = "Too many carbs for my liking. If you're watching your carb intake, this isn't the dish for you.", Date = DateTime.Parse("2022-01-20 13:54:17"), Likes = 0 },
+      new Review { ReviewerName = "CookingConnoisseur", Rating = 5, Comments = "Quick, easy, and delicious. A perfect weeknight meal!", Date = DateTime.Parse("2022-03-10 19:08:13"), Likes = 11 },
+      new Review { ReviewerName = "SaucySamantha", Rating = 3, Comments = "The sauce was too heavy for my taste. Would be better with a lighter sauce.", Date = DateTime.Parse("2022-02-03 11:31:48"), Likes = 2 },
+      new Review { ReviewerName = "CheeseLover99", Rating = 5, Comments = "Cheesy and delicious. Can't go wrong with this dish!", Date = DateTime.Now, Likes = 7 },
+      new Review { ReviewerName = "FoodieFrenzy", Rating = 4, Comments = "Healthy and flavorful. A great option for those looking for a nutritious meal.", Date = DateTime.Parse("2021-12-05 14:17:36"), Likes = 3 }
+  };
+
+  private List<Review> sorted_reviews;
+  string selectedSortOption = "latest";
+  private Review newReview = new Review();
+
+  private void AddReview()
+  {
+      newReview.Date = DateTime.Now;
+      newReview.ReviewerName = "BakingBestie123";
+      reviews.Insert(0, newReview);
+      newReview = new Review();
+  }
+
+  private void SortReviews(ChangeEventArgs e)
+  {
+    sorted_reviews = reviews;
+    selectedSortOption = e.Value.ToString();
+
+    switch(selectedSortOption){
+      case "latest":
+          sorted_reviews = reviews.OrderByDescending(r => r.Date).ToList();
+          break;
+      case "rating-high":
+          sorted_reviews = reviews.OrderByDescending(r => r.Rating).ToList();
+          break;
+      case "rating-low":
+          sorted_reviews = reviews.OrderBy(r => r.Rating).ToList();
+          break;
+      case "helpful":
+          sorted_reviews = reviews.OrderByDescending(l => l.Likes).ToList();
+          break;
+    }
+
+    reviews = sorted_reviews;
+
+  }
+
+  
+  private void IncrementLikes(Review review)
+  {
+      if(!review.Pressed){
+        review.Likes++;
+        review.Pressed = true;
+      }
+      else{
+        review.Likes--;
+        review.Pressed = false;
+      }
+  }
+
+}

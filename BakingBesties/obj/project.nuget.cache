@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "5zPsIwxY08HsIV84hkwDHfNbt+EqhOPPwog1htT4v/SZUsBPPewf2MForc35ypJkvs2prafQdoz5OfZQX2PnZg==",
+  "success": true,
+  "projectFilePath": "/Users/scottpeters/Desktop/CPSC 481/BakingBesties/BakingBesties/BakingBesties.csproj",
+  "expectedPackageFiles": [
+    "/Users/scottpeters/.nuget/packages/microsoft.typescript.msbuild/4.9.5/microsoft.typescript.msbuild.4.9.5.nupkg.sha512"
+  ],
+  "logs": []
+}

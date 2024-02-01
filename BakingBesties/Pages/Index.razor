@@ -1,0 +1,62 @@
+﻿@page "/"
+@using Microsoft.Fast.Components.FluentUI
+@using BakingBesties.Shared
+@* This is the homepage*@
+
+
+<style>
+
+    fluent-horizontal-scroll {
+        max-width: 1700px;
+        margin: 20px;
+        margin-left: 15px;
+    }
+
+    a.link {
+        color: #333;
+        text-decoration: none;
+    }
+
+        a.link:hover {
+            text-decoration: underline;
+        }
+</style>
+
+<h1><a class="link" href="/featured">Featured</a></h1>
+
+<div>
+    <FluentHorizontalScroll Speed="600" Easing="ScrollEasing.EaseInOut">
+            <RecipeCard ImageUrl="cookie.png" Title="Cookie" PrepTime="15" CookTime="15" Rating="4" NumberOfReviews="12" Url="/cookie" />
+            <RecipeCard ImageUrl="pancake.jpg" Title="Pancake" PrepTime="5" CookTime="2" Rating="3" NumberOfReviews="19" />
+            <RecipeCard ImageUrl="baconpancake.jpg" Title="Bacon & Pancake" PrepTime="10" CookTime="7" Rating="5" NumberOfReviews="9" />
+            <RecipeCard ImageUrl="pizzaH.png" Title="Hawaiian Pizza" PrepTime="15" CookTime="15" Rating="4" NumberOfReviews="12" />
+            <RecipeCard ImageUrl="pizzaM.png" Title="Meat Lovers" PrepTime="10" CookTime="15" Rating="4" NumberOfReviews="12" />
+            <RecipeCard ImageUrl="pizzaC.png" Title="Cheese Pizza" PrepTime="25" CookTime="25" Rating="1" NumberOfReviews="92" />
+            <RecipeCard ImageUrl="pizzaC.png" Title="Cheesy Pizza" PrepTime="20" CookTime="35" Rating="2" NumberOfReviews="9" />
+    </FluentHorizontalScroll>
+</div>
+
+
+<br />
+<h1><a class="link" href="/recommended">Recommended</a></h1>
+
+<div>
+    <FluentHorizontalScroll Speed="600" Easing="ScrollEasing.EaseInOut">
+        <RecipeCard ImageUrl="pizzaH.png" Title="Hawaiian Pizza" PrepTime="15" CookTime="15" Rating="4" NumberOfReviews="12" />
+        <RecipeCard ImageUrl="pizzaM.png" Title="Meat Lovers" PrepTime="10" CookTime="15" Rating="4" NumberOfReviews="12" />
+        <RecipeCard ImageUrl="pizzaC.png" Title="Cheese Pizza" PrepTime="25" CookTime="25" Rating="1" NumberOfReviews="92" />
+        <RecipeCard ImageUrl="pizzaC.png" Title="Cheesy Pizza" PrepTime="20" CookTime="35" Rating="2" NumberOfReviews="9" />
+        <RecipeCard ImageUrl="cookie.png" Title="Cookie" PrepTime="15" CookTime="15" Rating="4" NumberOfReviews="12" />
+        <RecipeCard ImageUrl="pancake.jpg" Title="Pancake" PrepTime="5" CookTime="2" Rating="3" NumberOfReviews="19" />
+        <RecipeCard ImageUrl="baconpancake.jpg" Title="Bacon & Pancake" PrepTime="10" CookTime="7" Rating="5" NumberOfReviews="9" />
+    </FluentHorizontalScroll>
+</div>
+
+@code {
+    private bool shower = false;
+    private void setShow()
+    {
+        shower = !shower;
+    }
+}
+

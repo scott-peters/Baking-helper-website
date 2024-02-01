@@ -1,0 +1,194 @@
+﻿@using System.Text.Json
+
+<style>
+    .card {
+        transition: 0.3s;
+        height: 20%;
+        width: 20%;
+        float: left;
+    }
+
+    .card_overlay {
+        position: absolute;
+        top: 0;
+        left: auto;
+        width: 100%;
+        height: 100%;
+        background: #ffff;
+        opacity: 0;
+        z-index:0;
+    }
+
+    .card_overlay2 {
+        background: #4444;
+        position: absolute;
+        bottom: 0;
+        right: 10%;
+        opacity: 100%;
+        z-index: 0;
+    }
+
+    .card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    }
+
+    .card_img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        aspect-ratio: 20/15;
+        object-fit: fill;
+    }
+
+    .card:hover .card_overlay {
+        opacity: 1
+    }
+
+    .class_title {
+    }
+
+    .card_bottom {
+    }
+
+    .more-link {
+        position: relative;
+        right: 0;
+        bottom: 0;
+    }
+
+    .rating {
+    }
+
+    .star {
+        width: 20%;
+        height: 20%
+    }
+
+    .linkers {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 0;
+    }
+</style>
+
+<div class="card">
+    <img class="card_img " src=@imgurl>
+    <div class="card_overlay">
+        <a class="linkers" href="#" />
+
+        <h4 class="card_body">@Title</h4>
+        <p class="rating">
+            Rating:              @if (stars == 5)
+            {
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+            }
+            else if (stars == 4)
+            {
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+            }
+            else if (stars == 3)
+            {
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+            }
+            else if (stars == 2)
+            {
+                <span class="icon">★</span>
+                <span class="icon">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+            }
+            else if (stars == 1)
+            {
+                <span class="icon">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+                <span class="icon" style="color: rgb(160, 160, 160);">★</span>
+            } (12 reviews)
+        </p>
+        <p>Prep Time: @prept</p>
+        <p>Cook Time: @cookt</p>
+        
+
+    </div>
+    <div class="card_bottom">
+        <h2 class="card_title">
+
+            @Title
+            <button onclick="@foodserial" style="font-size:14px;position:absolute;right: 0px;">Remove</button>
+        </h2>
+
+        
+    </div>
+</div>
+
+@code {
+    //These are cards that are used in the bookmarks
+    //They are different from cards on other pages because they have a button to remove the item from the bookmarks
+    [Parameter]
+    public string Title { get; set; } = "Set by Child";
+
+    [Parameter]
+    public string imgurl { get; set; } = "cookie.jpg";
+
+    [Parameter]
+    public string prept { get; set; } = "1 minute";
+
+    [Parameter]
+    public string cookt { get; set; } = "1 minute";
+    [Parameter]
+    public int stars { get; set; } = 4;
+    public class Food
+    {
+        public string Name { get; set; }
+        public int rating { get; set; }
+        public string Imgurl { get; set; }
+        public int Diff { get; set; }
+        public DateTime Date { get; set; }
+        public int Cookt { get; set; }
+        public int Prept { get; set; }
+        public bool vegan { get; set; }
+        public bool vege { get; set; }
+    }
+
+    private void foodserial()
+    {
+        var file = File.ReadAllText("bookmarks.txt");
+        List<Food> userCopy = System.Text.Json.JsonSerializer.Deserialize<List<Food>>(file);
+
+        Food food = new Food { Name = Title, Imgurl = imgurl, rating = stars, Prept = 10, Cookt = 10 };
+        List<Food> newCopy = new List<Food>();
+        foreach (Food f in userCopy)
+        {
+            if (!f.Name.Equals(Title))
+            {
+                newCopy.Add(f);
+            }
+        }
+        var jsonString = JsonSerializer.Serialize(newCopy);
+        Title = "Removed";
+        File.WriteAllText("bookmarks.txt", jsonString);
+    }
+    private bool shower = false;
+    private void setShow()
+    {
+        shower = !shower;
+    }
+}
+

@@ -1,0 +1,442 @@
+﻿@using System.Text.Json
+@page "/bookmarks"
+<style>
+
+    .preference {
+        background: #4323;
+        position: fixed;
+        padding-left: 1%;
+        top: 10%;
+        left: 0;
+        float: left;
+        height: 100%;
+        width: 18%
+    }
+
+    .results {
+        position: absolute;
+        right: 0;
+        width: 80%;
+    }
+
+    .card {
+        transition: 0.3s;
+        margin-right: 2%;
+        margin-bottom: 1%;
+        height: 20%;
+        width: 16%;
+        float: left;
+    }
+
+    .card_overlay {
+        top: 0;
+        left: auto;
+        width: 100%;
+        height: 100%;
+        background: #ffff;
+        opacity: 0
+    }
+
+    .card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    }
+
+    .card_img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        aspect-ratio: 100/80;
+        object-fit: fill;
+    }
+
+    .card:hover .card_overlay {
+        opacity: 1
+    }
+
+
+    .card_container {
+        float: left;
+    }
+
+    .card_title {
+        font-size: 150%
+    }
+
+    .card_bottom {
+    }
+</style>
+
+
+
+<div class="bod">
+    <div class="preference">
+        <div align="left" style="margin-top:5px">
+            <label for="sort-ratings">Profile:</label>
+
+            <InputSelect class="btn btn-light" id="sort-ratings" @bind-Value="@prefname" @onclick="setPref">
+                @foreach (Pref pref in profiles)
+                {
+                    <option value="@pref.name">@pref.name</option>
+                }
+            </InputSelect>
+            <button class="btn btn-light" onclick="@renameButton">rename</button>
+
+            <button class="btn btn-light" onclick="@addButton">Add</button>
+
+            @if (renameMode)
+            {
+
+                <form @onsubmit="@renamer" style="margin-top:10px">
+                    <input class="form-control" placeholder="Rename to" aria-label="Search" @bind-value="renameTo">
+                </form>
+            }
+            @if (addMode)
+            {
+                <form @onsubmit="@addPref">
+                    <input class="form-control" placeholder="New Profile Name" aria-label="Search" @bind-value="renameTo">
+                </form>
+            }
+
+            <p>
+                Reviews:
+            </p>
+
+            <label for="dr1"><InputCheckbox @bind-value="@def.fives" ValueExpression="@( () => def.fives )" />  5 star</label><br>
+
+            <label for="dr2"><InputCheckbox @bind-value="@def.fours" ValueExpression="@( () => def.fours )" />  4 star</label><br>
+
+            <label for="dr3"><InputCheckbox @bind-value="@def.threes" ValueExpression="@( () => def.threes )" />  3 star</label><br>
+
+            <label for="dr3"><InputCheckbox @bind-value="@def.twos" ValueExpression="@( () => def.twos )" /> 2 star</label><br>
+
+            <label for="dr3"><InputCheckbox @bind-value="@def.ones" ValueExpression="@( () => def.ones )" /> 1 star</label><br><br>
+
+            <form onsubmit="@filter">
+
+                <p>
+                    Maximum prep time:
+                </p>
+                <InputSelect class="btn btn-light" id="sort-ratings" @bind-Value="@maxPrept" @onclick="setPrept">
+
+                    <option value=5>5 minute</option>
+                    <option value=10>10 minute</option>
+                    <option value=15>15 minute</option>
+                    <option value=20>20 minute</option>
+                    <option value=30>30 minute</option>
+
+                </InputSelect>
+                <br><br>
+                <p>
+                    Maximum cook time:
+                </p>
+                <InputSelect class="btn btn-light" id="sort-ratings" @bind-Value="@maxCookt" @onclick="setCookt">
+
+                    <option value=5>5 minute</option>
+                    <option value=10>10 minute</option>
+                    <option value=15>15 minute</option>
+                    <option value=20>20 minute</option>
+                    <option value=30>30 minute</option>
+
+                </InputSelect>
+                <br><br>
+                <p>
+                    Dietary Restrictions:
+                </p>
+
+                <label for="dr1"><InputCheckbox @bind-value="@def.vegan" ValueExpression="@( () => def.vegan )" /> Vegan</label><br>
+
+                <label for="dr2"> <InputCheckbox @bind-value="@def.vege" ValueExpression="@( () => def.vege )" /> Vegetarian</label><br>
+
+                <label for="dr3"><InputCheckbox @bind-value="@def.glu" ValueExpression="@( () => def.vege )" /> Gluten-free</label><br>
+
+                <label for="dr3"><InputCheckbox @bind-value="@def.por" ValueExpression="@( () => def.vege )" /> No pork</label><br>
+
+                <label for="dr3"><InputCheckbox @bind-value="@def.bee" ValueExpression="@( () => def.vege )" /> No beef</label><br><br>
+                <input type="submit" value="Apply Preferences" class="btn btn-secondary">
+            </form>
+        </div>
+    </div>
+
+
+    <div class="results">
+        <h2>Bookmarks</h2>
+
+
+        <div align="right" style="padding-right:5%">
+            <label for="sort-ratings">Sort by</label>
+
+            <InputSelect name="sort-ratings" @bind-Value="@selectedSortOption" @onclick=" SortFood">
+                <option value="latest">Latest</option>
+                <option value="rating-high">Rating-High</option>
+                <option value="rating-low">Rating-Low</option>
+            </InputSelect>
+        </div>
+        @foreach (var food in results)
+        {
+            <Cardb Title=@food.Name imgurl=@food.Imgurl stars=food.rating prept=@(@food.Cookt.ToString()+ " minutes") cookt=@(@food.Cookt.ToString()+ " minutes") />
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string search { get; set; }
+
+
+    public string renameTo { get; set; }
+    public string prefname { get; set; } = default;
+    public int maxPrept { get; set; } = 30;
+    public int maxCookt { get; set; } = 30;
+    //class for storing information about foods
+    public class Food
+    {
+        public string Name { get; set; }
+        public int rating { get; set; }
+        public string Imgurl { get; set; }
+        public int Diff { get; set; }
+        public DateTime Date { get; set; }
+        public int Cookt { get; set; }
+        public int Prept { get; set; }
+        public bool vegan { get; set; }
+        public bool vege { get; set; }
+    }
+
+    //class for storing preferences
+    public class Pref
+    {
+        public string name { get; set; }
+        public int prept { get; set; }
+        public int cookt { get; set; }
+        public bool vegan { get; set; }
+        public bool vege { get; set; }
+        public bool glu { get; set; }
+        public bool por { get; set; }
+        public bool bee { get; set; }
+
+        //RATING PREFERENCES
+        public bool fives { get; set; }
+        public bool fours { get; set; }
+        public bool threes { get; set; }
+        public bool twos { get; set; }
+        public bool ones { get; set; }
+
+    }
+
+
+    private Pref select = new Pref { name = "default", prept = 30, cookt = 30, vegan = false, vege = false, fives = true, fours = true, threes = true, twos = true, ones = true };
+    private Pref profile1 = new Pref { name = "Profile 1", prept = 5, cookt = 10, vegan = false, vege = false, fives = false, fours = false, threes = true, twos = true, ones = true };
+    private Pref def = new Pref();
+
+
+    private List<Pref> profiles = new List<Pref>
+    {
+    };
+
+
+    public List<Food> results;
+
+    private bool renameMode = false;
+    private bool addMode = false;
+    private List<Food> sorted_food;
+    private string selectedSortOption;
+    private int page;
+
+
+
+    protected override void OnParametersSet()
+    {
+
+        profiles.Add(select);
+        profiles.Add(profile1);
+        results = new List<Food>();
+
+        var file = File.ReadAllText("bookmarks.txt");
+        results = System.Text.Json.JsonSerializer.Deserialize<List<Food>>(file);
+
+        results = results.OrderBy(r => r.rating).ToList();
+
+        def = select;
+        filter();
+    }
+
+    private void SortFood()
+    {
+
+        sorted_food = results;
+        switch (selectedSortOption)
+        {
+            case "latest":
+                sorted_food = results.OrderByDescending(r => r.Date).ToList();
+                break;
+            case "rating-high":
+                sorted_food = results.OrderByDescending(r => r.rating).ToList();
+                break;
+            case "rating-low":
+                sorted_food = results.OrderBy(r => r.rating).ToList();
+                break;
+        }
+
+        results = sorted_food;
+
+    }
+
+    private void setPrept()
+    {
+        def.prept = maxPrept;
+    }
+
+    private void setCookt()
+    {
+        def.cookt = maxCookt;
+    }
+
+    protected void renameButton()
+    {
+        renameMode = !renameMode;
+    }
+    protected void addButton()
+    {
+        addMode = !addMode;
+    }
+
+    protected void renamer()
+    {
+        if (renameTo.Length > 0)
+            def.name = renameTo;
+
+        renameMode = false;
+        renameTo = "";
+    }
+
+    protected void addPref()
+    {
+
+
+        if (renameTo.Length > 0)
+        {
+            Pref newP = new Pref { name = renameTo, vegan = false, vege = false, fives = true, fours = true, threes = true, twos = true, ones = true };
+            profiles.Add(newP);
+        }
+
+        addMode = false;
+    }
+
+    protected void setPref()
+    {
+        foreach (var pref in profiles)
+        {
+            if (pref.name.Equals(prefname))
+            {
+                def = pref;
+                continue;
+            }
+        }
+        maxPrept = def.prept;
+        filter();
+    }
+
+    protected List<Food> ratingFilter(List<Food> foodlist, int n)
+    {
+        List<Food> newres = new List<Food>();
+
+        foreach (var feed in results)
+        {
+            if (feed.rating != n)
+            {
+                newres.Add(feed);
+            }
+        }
+        return newres;
+    }
+
+    protected void filter()
+    {
+        results = new List<Food>();
+        var file = File.ReadAllText("bookmarks.txt");
+        results = System.Text.Json.JsonSerializer.Deserialize<List<Food>>(file);
+
+        if (def.vegan == false && def.vege == false && def.fives && def.fours && def.threes && def.twos && def.ones && def.prept == 30 && def.cookt == 30)
+        {
+            return;
+        }
+
+        if (def.fives == false)
+        {
+            results = ratingFilter(results, 5);
+        }
+
+        if (def.fours == false)
+        {
+            results = ratingFilter(results, 4);
+        }
+
+        if (def.threes == false)
+        {
+            results = ratingFilter(results, 3);
+        }
+        if (def.twos == false)
+        {
+            results = ratingFilter(results, 2);
+        }
+        if (def.ones == false)
+        {
+            results = ratingFilter(results, 1);
+        }
+
+
+        if (def.vegan)
+        {
+            List<Food> newres = new List<Food>();
+            foreach (var feed in results)
+            {
+                if (feed.vegan)
+                {
+                    newres.Add(feed);
+                }
+            }
+            results = newres;
+        }
+
+        if (def.vege)
+        {
+            List<Food> newres = new List<Food>();
+            foreach (var feed in results)
+            {
+                if (feed.vege)
+                {
+                    newres.Add(feed);
+                }
+            }
+            results = newres;
+        }
+
+        if (def.prept < 30)
+        {
+            List<Food> newres = new List<Food>();
+            foreach (var feed in results)
+            {
+                if (feed.Prept <= def.prept)
+                {
+                    newres.Add(feed);
+                }
+            }
+            results = newres;
+        }
+
+        if (def.cookt < 30)
+        {
+            List<Food> newres = new List<Food>();
+            foreach (var feed in results)
+            {
+                if (feed.Cookt <= def.cookt)
+                {
+                    newres.Add(feed);
+                }
+            }
+            results = newres;
+        }
+
+    }
+
+}
+

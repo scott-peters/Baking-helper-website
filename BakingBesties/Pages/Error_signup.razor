@@ -1,0 +1,132 @@
+﻿@page "/error_signup"
+
+<style>
+    .nav-item {
+        padding-right: 20px
+    }
+
+    .form-inline {
+        position: absolute;
+        padding-right: 10px;
+        right: 0px;
+    }
+
+    .button {
+        border: none;
+        color: white;
+        padding: 16px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+    }
+
+    .button1 {
+        background-color: white;
+        color: black;
+        border: 2px solid #4CAF50;
+    }
+
+        .button1:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+    .button2 {
+        background-color: white;
+        color: black;
+        border: 2px solid #008CBA;
+    }
+
+        .button2:hover {
+            background-color: #008CBA;
+            color: white;
+        }
+
+    .parent {
+        display: table;
+        width: 100%;
+    }
+    /* got how to center from here
+        https://stackoverflow.com/questions/22658141/css-center-form-in-page-horizontally-and-vertically
+    */
+    #form_login {
+        left: 57%;
+        top: 47%;
+        position: absolute;
+        transform: translate(-50%, -50%);
+    }
+
+    .error {
+        color: #D8000C;
+        /*background-color: #FFBABA;*/
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#"><img src='bblogo_smol.jpg'></a>
+
+    <div class="collapse navbar-collapse" id="navbarText">
+
+        <ul class="navbar-nav mr-auto">
+
+            <li class="nav-item">
+                <a class="nav-link" href="counter">Bookmarks</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Login/Signup</a>
+            </li>
+
+
+        </ul>
+
+        <form class="form-inline">
+            <input class="form-control" placeholder="Search" aria-label="Search">
+        </form>
+
+    </div>
+
+</nav>
+
+<div align="center">
+
+    <img src="bblogo.png" alt="Baking Besties" width="200" height="150" />
+
+</div>
+
+<div align="center">
+    <h2>Signup</h2>
+</div>
+
+<div align="center">
+    <div id="parent">
+        <form class="form-horizontal">
+            <form id="form_login">
+                <label for="fname">First name:</label>
+                <input type="text" id="firstname" name="firstname" placeholder="First Name">
+                <div class="error">First Name is Required</div><br>
+                <label for="lname">Last name:</label>
+                <input type="text" id="lastname" name="lastname" placeholder="Last Name">
+                <div class="error">Last Name is Required</div><br>
+                <label for="lname">Email:</label>
+                <input type="text" id="Email" name="email" placeholder="Email@example.com">
+                <div class="error">Email is Required</div><br>
+                <label for="password">Password:</label>
+                <input type="text" id="password" name="password" placeholder="Password">
+                <div class="error">Password must be at least 15 characters long</div><br>
+                <button class="button button1">Submit</button>
+                <button class="button button2">Back to Login</button>
+            </form>
+        </form>
+    </div>
+</div>
+
+@code {
+    
+
+}
+
+
